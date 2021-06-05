@@ -14,18 +14,20 @@ services:
           - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
 
     app-nextcloud:
-        image: nextcloud:20.0.10-fpm-alpine
-        restart: always
-        volumes:
-            - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
+        container_name: app-nextcloud
         environment:
             MYSQL_USER: ${MYSQL_USER:-dbuser}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
             MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
+        image: nextcloud:20.0.10-fpm-alpine
+        restart: always
+        volumes:
+            - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
 
     mysql:
         command: [--ssl=0]
+        container_name: mysql
         environment:
             MYSQL_USER: ${MYSQL_USER:-dbuser}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
@@ -47,6 +49,4 @@ services:
         depends_on:
           - mysql
         image: adminer
-        ports:
-          - ${ADMINER_PUBLISHED_PORT:-8090}:8080
         restart: always
