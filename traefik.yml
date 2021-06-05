@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  traefik:
+    image: traefik
+    command: 
+      - "--api.insecure=true"
+      - "--global.checknewversion=false"
+      - "--global.sendanonymoususage=false"
+      - "--log=true"
+      - "--log.level=INFO"
+      - "--providers.docker=true"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.http=true"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+      - "--entrypoints.http.http.redirections.entrypoint.to=https"
+      - "--entrypoints.http.http.redirections.entrypoint.scheme=https"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge=true"
+      - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
+      - "--certificatesresolvers.letsencrypt.acme.email=${ADMIN_EMAIL:?err}"
+      - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    ports:
+      - 80:80
+      - 443:443
+      - ${TRAEFIK_DASHBOARD_PUBLISHED_PORT:-8080}:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./letsencrypt:/letsencrypt
+
+
+    app-nextcloud:
+        expose:
+          - 80
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.app-nextcloud.rule=Host(`drive.${DOMAIN:?err}`)
+          - traefik.http.routers.app-nextcloud.entrypoints=https
+          - traefik.http.routers.app-nextcloud.tls=true
+          - traefik.http.routers.app-nextcloud.tls.certResolver=letsencrypt
+
+    adminer:
+        expose:
+          - 8090
+        labels:
+          - traefik.enable=true
+          - traefik.http.routers.adminer.rule=Host(`adminer.${DOMAIN:?err}`)
+          - traefik.http.routers.adminer.entrypoints=https
+          - traefik.http.routers.adminer.tls=true
+          - traefik.http.routers.adminer.tls.certResolver=letsencrypt
