@@ -14,7 +14,7 @@ services:
         container_name: app-nextcloud
         depends_on:
             - mysql
-            - redis
+            # - redis
         environment:
             MYSQL_USER: ${MYSQL_USER:-dbuser}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
@@ -32,10 +32,10 @@ services:
         volumes:
             - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
 
-    redis:
-        container_name: redis
-        image: redis:alpine
-        restart: always 
+    # redis:
+    #     container_name: redis
+    #     image: redis:alpine
+    #     restart: always 
 
     mysql:
         command: [--ssl=0]
