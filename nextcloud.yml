@@ -1,26 +1,25 @@
 version: "3.8"
 services:
     nginx-proxy:
+        build: ./nginx
         container_name: nginx-proxy
         depends_on:
           - app-nextcloud        
-        image: nginx:alpine
         restart: always
         volumes:
-          - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-          - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
+          - ${VOLUME_PATH:?err}/nextcloud:/var/www/html:ro
 
     app-nextcloud:
         container_name: app-nextcloud
         depends_on:
             - mysql
-            # - redis
+            - redis
         environment:
             MYSQL_USER: ${MYSQL_USER:-dbuser}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
             MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
-            # REDIS_HOST: redis
+            REDIS_HOST: redis
         image: nextcloud:20.0.10-fpm-alpine
         labels:
           - "traefik.enable=true"
@@ -32,10 +31,10 @@ services:
         volumes:
             - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
 
-    # redis:
-    #     container_name: redis
-    #     image: redis:alpine
-    #     restart: always 
+    redis:
+        container_name: redis
+        image: redis:alpine
+        restart: always 
 
     mysql:
         command: [--ssl=0]
