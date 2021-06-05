@@ -1,8 +1,5 @@
 version: "3.8"
 services:
-
-#La configuration du proxy nginx.
-#Les fichiers de conf ont été concus pour vous permettre d'injecter des variables lors du build du conteneur nginx.
     nginx-proxy:
         command: >
           /bin/sh -c "export HOST=nextcloud SERVER_LISTEN_PORT=8080 SERVER_NAME=drive.nassar.free.ci && 
@@ -16,8 +13,6 @@ services:
           - ./nginx/conf.d/default.template:/etc/nginx/conf.d/default.template
           - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
 
-#La configuration de l'application nextcloud. 
-#Les credentials visibles sont utilisés par defaut si les variables n'ont pas été definies.
     app-nextcloud:
         image: nextcloud:20.0.10-fpm-alpine
         restart: always
@@ -29,8 +24,6 @@ services:
             MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
 
-#La configuration de la base de donnée pour nextcloud. 
-#Les credentials visibles sont utilisés par defaut si les variables n'ont pas été definies.
     mysql:
         command: [--ssl=0]
         environment:
@@ -49,8 +42,6 @@ services:
         volumes:
             - ${VOLUME_PATH:?err}/mysql:/var/lib/mysql
 
-#La configuration de l'adminer pour la base de donnée mysql.
-#Adminer est un outil qui vous permet de manipuler votre base de donnée via interface graphique
     adminer:
         container_name: adminer
         depends_on:
