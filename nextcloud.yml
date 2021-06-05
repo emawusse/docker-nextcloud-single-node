@@ -33,6 +33,7 @@ services:
             - ${VOLUME_PATH:?err}/nextcloud:/var/www/html
 
     redis:
+        container_name: redis
         image: redis:alpine
         restart: always 
 

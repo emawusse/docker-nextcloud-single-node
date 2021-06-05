@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   traefik:
-    image: traefik
+    container_name: traefik
     command: 
       - "--api.insecure=true"
       - "--global.checknewversion=false"
@@ -20,6 +20,7 @@ services:
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http"
       - "--certificatesresolvers.letsencrypt.acme.email=${ADMIN_EMAIL:?err}"
       - "--certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json"
+    image: traefik
     ports:
       - 80:80
       - 443:443
