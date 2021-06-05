@@ -20,7 +20,7 @@ services:
             MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
             MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
-            REDIS_HOST: redis
+            # REDIS_HOST: redis
         image: nextcloud:20.0.10-fpm-alpine
         labels:
           - "traefik.enable=true"
