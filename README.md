@@ -1,4 +1,4 @@
-# nextcloud-single-node | Docker-Compose [Traefik-Nginx-Mysql-Adminer-Nextcloud-Redis]
+# Docker-Compose [Traefik-Nginx-Mysql-Adminer-Nextcloud-Redis]
 
 Cette stack vous permet d'avoir votre environnement  nextcloud derrière un reverse proxy comme traefik.
 
@@ -12,9 +12,8 @@ Cette stack vous permet d'avoir votre environnement  nextcloud derrière un reve
 
 * Vous devez cloner le projet : git clone https://github.com/enassar225/docker-nextcloud-single-node.git
 * Modifier le fichier .env dans le meme répertoire ou se trouve le projet
-* Si vous ne modifier pas le fichier .env, les variables par defaut dans la stack seront celles qui seront utilisées.
-* Lancez la stack tout en visualisant les logs en tapant : 
-  docker-compose -f nextcloud.yml -f traefik.yml up -d && docker-compose logs nextcloud.yml -f traefik.yml
+* Si vous ne modifiez pas le fichier .env, les variables par defaut dans la stack seront celles qui seront utilisées.
+* Lancez la stack en tapant : docker-compose -f nextcloud.yml -f traefik.yml up -d
 
 ## Sources
 
