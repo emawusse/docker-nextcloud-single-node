@@ -3,7 +3,9 @@ services:
     nginx-proxy:
         container_name: nginx-proxy
         depends_on:
-          - app-nextcloud        
+          - app-nextcloud    
+        expose:
+          - 80      
         image: nginx:alpine
         restart: always
         volumes:
