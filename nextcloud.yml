@@ -19,13 +19,13 @@ services:
     app-nextcloud:
         container_name: app-nextcloud
         depends_on:
-            - mariadb
+            - mysql
             - redis
         environment:
-            MARIADB_USER: ${MARIADB_USER:-dbuser}
-            MARIADB_PASSWORD: ${MARIADB_PASSWORD:-dr1v@@E}
-            MARIADB_DATABASE: ${MARIADB_DATABASE:-dbdrive}
-            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-dr1v@@E}
+            MYSQL_USER: ${MYSQL_USER:-dbuser}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
             REDIS_HOST: redis
         image: nextcloud:20.0.10-fpm-alpine
         restart: always
@@ -37,23 +37,29 @@ services:
         image: redis:alpine
         restart: always 
 
-    mariadb:
+    mysql:
         command: [--ssl=0]
-        container_name: mariadb
+        container_name: mysql
         environment:
-            MARIADB_USER: ${MARIADB_USER:-dbuser}
-            MARIADB_PASSWORD: ${MARIADB_PASSWORD:-dr1v@@E}
-            MARIADB_DATABASE: ${MARIADB_DATABASE:-dbdrive}
-            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-dr1v@@E}
-        image: mariadb:10.5.10
+            MYSQL_USER: ${MYSQL_USER:-dbuser}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
+        healthcheck:
+            test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-dr1vE}"]
+            interval: 30s
+            timeout: 60s
+            retries: 5
+            start_period: 80s
+        image: mysql:5.7
         restart: always
         volumes:
-            - ${VOLUME_PATH:?err}/mariadb:/var/lib/mysql
+            - ${VOLUME_PATH:?err}/mysql:/var/lib/mysql
 
     adminer:
         container_name: adminer
         depends_on:
-          - mariadb
+          - mysql
         image: adminer
         labels:
           - "traefik.enable=true"
