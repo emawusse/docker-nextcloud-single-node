@@ -1,24 +1,25 @@
 version: "3.8"
 services:
     nginx-proxy:
-        build: ./nginx
         container_name: nginx-proxy
         depends_on:
           - app-nextcloud        
+        image: nginx:alpine
         restart: always
         volumes:
+          - ./nginx/nginx.conf:/etc/nginx/nginx.conf
           - ${VOLUME_PATH:?err}/nextcloud:/var/www/html:ro
 
     app-nextcloud:
         container_name: app-nextcloud
         depends_on:
-            - mysql
+            - mariadb
             - redis
         environment:
-            MYSQL_USER: ${MYSQL_USER:-dbuser}
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
-            MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
+            MARIADB_USER: ${MARIADB_USER:-dbuser}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD:-dr1v@@E}
+            MARIADB_DATABASE: ${MARIADB_DATABASE:-dbdrive}
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-dr1v@@E}
             REDIS_HOST: redis
         image: nextcloud:20.0.10-fpm-alpine
         labels:
@@ -36,29 +37,23 @@ services:
         image: redis:alpine
         restart: always 
 
-    mysql:
+    mariadb:
         command: [--ssl=0]
-        container_name: mysql
+        container_name: mariadb
         environment:
-            MYSQL_USER: ${MYSQL_USER:-dbuser}
-            MYSQL_PASSWORD: ${MYSQL_PASSWORD:-dr1v@@E}
-            MYSQL_DATABASE: ${MYSQL_DATABASE:-dbdrive}
-            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-dr1v@@E}
-        healthcheck:
-            test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p${MYSQL_ROOT_PASSWORD:-dr1vE}"]
-            interval: 30s
-            timeout: 60s
-            retries: 5
-            start_period: 80s
-        image: mysql:5.7
+            MARIADB_USER: ${MARIADB_USER:-dbuser}
+            MARIADB_PASSWORD: ${MARIADB_PASSWORD:-dr1v@@E}
+            MARIADB_DATABASE: ${MARIADB_DATABASE:-dbdrive}
+            MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-dr1v@@E}
+        image: mariadb:10.5.10
         restart: always
         volumes:
-            - ${VOLUME_PATH:?err}/mysql:/var/lib/mysql
+            - ${VOLUME_PATH:?err}/mariadb:/var/lib/mysql
 
     adminer:
         container_name: adminer
         depends_on:
-          - mysql
+          - mariadb
         image: adminer
         labels:
           - "traefik.enable=true"
